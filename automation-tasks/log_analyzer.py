@@ -32,8 +32,9 @@ def analyze_log(log_file):
                 elif 'INFO' in line:
                     info_count += 1
                 
-                # Extract IP addresses
-                ip_match = re.search(r'\b(?:\d{1,3}\.){3}\d{1,3}\b', line)
+                # Extract IP addresses (simplified pattern for common cases)
+                # For production use, consider more sophisticated IP validation
+                ip_match = re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', line)
                 if ip_match:
                     ip_addresses.append(ip_match.group())
         
