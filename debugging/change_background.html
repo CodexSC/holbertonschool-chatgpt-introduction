@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Change Background Color</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding-top: 50px;
-    }
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Background Color</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
-<h2>Click the button to change the background color</h2>
-<button onclick="changeBackgroundColor()">Change Color</button>
+    <h2>Click the button to change the background color</h2>
+    <button onclick="changeBackgroundColor()">Change Color</button>
 
-<script>
-    function changeBackgroundColor() {
-        // Generate a random color
-        var colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan'];
-        var randomColor = colors[Math.floor(Math.random() * colors.length)];
-        // Change the background color of the body
-        document.body.style.backgroundColor = randomColor;
-    }
-</script>
+    <script>
+        function changeBackgroundColor() {
+            // Generate a random color
+            var randomColor = generateRandomColor();
+            // Change the background color of the body
+            document.body.style.backgroundColor = randomColor;
+        }
+
+        function generateRandomColor() {
+            var letters = "0123456789ABCDEF";
+            var color = "#";
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    </script>
 
 </body>
 </html>
-
