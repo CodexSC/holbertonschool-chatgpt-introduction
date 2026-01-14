@@ -1,26 +1,53 @@
 #!/usr/bin/python3
+"""
+Minesweeper Game (Console Version)
+
+This script implements a simple console-based Minesweeper game.
+Players reveal cells on a grid, trying to avoid hidden mines.
+Revealed cells show the number of adjacent mines, and empty cells
+trigger a cascade reveal of neighboring cells.
+
+Author: [Your Name]
+Date: 2026-01-14
+"""
+
 import random
 import os
 
 def clear_screen():
+    """Clears the console screen for better game visibility."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 class Minesweeper:
     def __init__(self, width=10, height=10, mines=10):
+        """
+        Initializes the Minesweeper board.
+
+        Args:
+            width (int): Number of columns.
+            height (int): Number of rows.
+            mines (int): Number of mines to place.
+        """
         self.width = width
         self.height = height
         self.mines = set(random.sample(range(width * height), mines))
-        self.field = [[' ' for _ in range(width)] for _ in range(height)]
         self.revealed = [[False for _ in range(width)] for _ in range(height)]
 
     def print_board(self, reveal=False):
+        """
+        Prints the current state of the board.
+
+        Args:
+            reveal (bool): If True, reveals all cells (used on game over).
+        """
         clear_screen()
         print('  ' + ' '.join(str(i) for i in range(self.width)))
         for y in range(self.height):
-            print(y, end=' ')
+            print(f"{y} ", end='')
             for x in range(self.width):
+                idx = y * self.width + x
                 if reveal or self.revealed[y][x]:
-                    if (y * self.width + x) in self.mines:
+                    if idx in self.mines:
                         print('*', end=' ')
                     else:
                         count = self.count_mines_nearby(x, y)
@@ -30,48 +57,66 @@ class Minesweeper:
             print()
 
     def count_mines_nearby(self, x, y):
+        """
+        Counts the number of mines adjacent to a cell.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            int: Number of adjacent mines.
+        """
         count = 0
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
+                if dx == 0 and dy == 0:
+                    continue
                 nx, ny = x + dx, y + dy
                 if 0 <= nx < self.width and 0 <= ny < self.height:
                     if (ny * self.width + nx) in self.mines:
                         count += 1
         return count
 
-    def is_won(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                if (y * self.width + x) not in self.mines and not self.revealed[y][x]:
-                    return False
-
-        return True
     def reveal(self, x, y):
-        if (y * self.width + x) in self.mines:
+        """
+        Reveals a cell. If the cell is empty, recursively reveals neighbors.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            bool: False if a mine is hit, True otherwise.
+        """
+        idx = y * self.width + x
+        if idx in self.mines:
             return False
+        if self.revealed[y][x]:
+            return True
         self.revealed[y][x] = True
         if self.count_mines_nearby(x, y) == 0:
             for dx in [-1, 0, 1]:
                 for dy in [-1, 0, 1]:
                     nx, ny = x + dx, y + dy
-                    if 0 <= nx < self.width and 0 <= ny < self.height and not self.revealed[ny][nx]:
+                    if 0 <= nx < self.width and 0 <= ny < self.height:
                         self.reveal(nx, ny)
         return True
 
     def play(self):
+        """Main game loop for user interaction."""
         while True:
             self.print_board()
             try:
                 x = int(input("Enter x coordinate: "))
                 y = int(input("Enter y coordinate: "))
+                if not (0 <= x < self.width and 0 <= y < self.height):
+                    print("Coordinates out of bounds. Try again.")
+                    continue
                 if not self.reveal(x, y):
                     self.print_board(reveal=True)
                     print("Game Over! You hit a mine.")
                     break
-                if self.is_won():
-                   self.print_board()
-                   print("Congratulations! You won!")
-                   break
             except ValueError:
                 print("Invalid input. Please enter numbers only.")
 
